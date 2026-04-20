@@ -1,0 +1,472 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>قسم المخازن الداخلي | معرض إيفان</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           الثيم العنابي الراقي (Burgundy Theme)
+           ========================================= */
+        :root {
+            /* الوضع الغامق - Dark Mode */
+            --bg-base: #0a0304;
+            --bg-surface: rgba(30, 10, 12, 0.75);
+            --bg-card: rgba(45, 15, 20, 0.5);
+            --bg-card-hover: rgba(60, 20, 25, 0.85);
+            
+            --primary: #e11d48; /* عنابي أساسي */
+            --primary-glow: rgba(225, 29, 72, 0.4);
+            --secondary: #fb7185; 
+            --accent-gold: #f59e0b; /* ذهبي هادئ */
+            
+            --border-glass: rgba(225, 29, 72, 0.25);
+            
+            --text-main: #f8fafc;
+            --text-muted: #fda4af;
+            
+            --success: #10b981;
+            --danger: #f43f5e;
+        }
+
+        [data-theme="light"] {
+            /* الوضع الفاتح - Light Mode */
+            --bg-base: #fff1f2;
+            --bg-surface: rgba(255, 255, 255, 0.9);
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --bg-card-hover: #ffffff;
+            
+            --primary: #be123c; 
+            --primary-glow: rgba(190, 18, 60, 0.25);
+            --secondary: #e11d48; 
+            --accent-gold: #d97706;
+            
+            --border-glass: rgba(190, 18, 60, 0.2);
+            
+            --text-main: #1c1917;
+            --text-muted: #881337;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; transition: all 0.4s ease; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden; 
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* كانفاس الجزيئات */
+        #particles-canvas {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* =========================================
+           زر تبديل الإضاءة
+           ========================================= */
+        .theme-switch-wrapper { position: fixed; top: 20px; left: 20px; z-index: 100; }
+        .theme-switch { display: inline-block; width: 60px; height: 34px; position: relative; }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #292524; transition: .4s; border-radius: 34px;
+            border: 1px solid var(--border-glass); box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .slider:before {
+            position: absolute; content: "\f186"; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            height: 26px; width: 26px; left: 4px; bottom: 3px; background-color: var(--primary);
+            color: #fff; display: flex; justify-content: center; align-items: center; font-size: 14px;
+            transition: .4s; border-radius: 50%; box-shadow: 0 0 10px var(--primary-glow);
+        }
+        input:checked + .slider { background-color: #ffe4e6; }
+        input:checked + .slider:before { transform: translateX(26px); content: "\f185"; background-color: #f59e0b; color: #fff; }
+
+        /* =========================================
+           الترويسة (Header)
+           ========================================= */
+        .hero-section {
+            padding: 7vh 15px 5vh; text-align: center; 
+            background: linear-gradient(180deg, rgba(225, 29, 72, 0.08) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-glass);
+            position: relative;
+        }
+        
+        .hero-icon {
+            font-size: clamp(3rem, 6vw, 4rem); color: var(--primary);
+            margin-bottom: 15px; display: inline-block; opacity: 0.9;
+        }
+
+        .hero-section h1 { font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 900; color: var(--text-main); margin-bottom: 10px; letter-spacing: -1px;}
+        .hero-section h2 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); font-weight: 700; color: var(--secondary); margin-bottom: 25px;}
+        
+        .motto-box {
+            display: inline-flex; align-items: center; gap: 12px; background: rgba(225, 29, 72, 0.1);
+            border: 1px solid var(--primary); color: var(--primary); padding: 12px 35px;
+            border-radius: 30px; font-weight: 800; font-size: clamp(1.1rem, 2vw, 1.3rem); margin-bottom: 10px;
+        }
+
+        /* =========================================
+           لوحة الشرف المهنية (بدون مبالغة)
+           ========================================= */
+        .team-board {
+            background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: 20px; 
+            padding: 35px 20px; max-width: 1200px; margin: 30px auto 0; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .manager-role {
+            display: inline-flex; align-items: center; gap: 12px; background: rgba(225, 29, 72, 0.15);
+            border: 1px solid var(--primary); color: var(--text-main); padding: 12px 35px;
+            border-radius: 30px; font-weight: 900; font-size: clamp(1.1rem, 2vw, 1.3rem); margin-bottom: 25px;
+        }
+        .manager-role i { color: var(--primary); font-size: 1.3em;}
+
+        .staff-grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;}
+        .staff-badge {
+            background: var(--bg-card); border: 1px solid var(--border-glass); 
+            padding: 10px 25px; border-radius: 25px; font-weight: 700; color: var(--text-main); 
+            font-size: clamp(1rem, 1.5vw, 1.15rem); display: flex; align-items: center; gap: 10px;
+            transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .staff-badge:hover { background: var(--bg-card-hover); border-color: var(--primary); transform: translateY(-3px);}
+        
+        /* أيقونات فردية لكل موظف */
+        .ic-jotkar { color: var(--accent-gold); font-size: 1.1em; } /* صيانة */
+        .ic-nader { color: var(--secondary); font-size: 1.1em; }  /* عربة */
+        .ic-jihad { color: #3b82f6; font-size: 1.1em; }         /* صندوق */
+        .ic-lazkeen { color: #10b981; font-size: 1.1em; }       /* منصة */
+
+        /* =========================================
+           قانون الوصل الثابت (الأساس)
+           ========================================= */
+        .law-card {
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.1), transparent);
+            border-right: 8px solid var(--danger); border-radius: 16px; padding: 30px; margin: 40px auto;
+            max-width: 1000px; position: relative; box-shadow: inset 0 0 20px rgba(225,29,72,0.05);
+        }
+        .law-card h3 { font-size: clamp(1.3rem, 3vw, 1.6rem); font-weight: 900; color: var(--danger); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;}
+        .law-card p { font-size: 1.15rem; color: var(--text-main); font-weight: 700; line-height: 1.6;}
+
+        /* =========================================
+           الهيكل العرضي
+           ========================================= */
+        .container { width: 100%; max-width: 1500px; margin: 0 auto; padding: 20px 15px 50px; }
+
+        .section-header {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 30px; margin-top: 30px;
+            border-bottom: 1px solid var(--border-glass); padding-bottom: 15px;
+        }
+        .section-header i { font-size: clamp(1.6rem, 3vw, 2rem); color: var(--secondary); }
+        .section-header h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); font-weight: 900; color: var(--text-main); }
+
+        /* =========================================
+           نظام 5S (تصميم شبكي أنيق)
+           ========================================= */
+        .five-s-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 50px; }
+        .s-box {
+            background: var(--bg-card); border: 1px solid var(--border-glass); border-top: 4px solid var(--primary);
+            padding: 30px 20px; border-radius: 16px; text-align: center; transition: 0.3s;
+        }
+        .s-box:hover { background: var(--bg-card-hover); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-color: var(--primary);}
+        .s-title { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 15px;}
+        .s-title span.eng { font-size: 2rem; font-weight: 900; color: var(--primary); line-height: 1;}
+        .s-title span.arb { font-size: 1.15rem; color: var(--text-main); font-weight: 800;}
+        .s-desc { font-size: 1rem; color: var(--text-muted); font-weight: 600; line-height: 1.6;}
+
+        /* =========================================
+           البطاقات والقوائم الموسعة (المهام الشاملة)
+           ========================================= */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 60px; }
+        
+        .card {
+            background: var(--bg-surface); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass); border-radius: 20px; padding: 35px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1); transition: all 0.3s ease; display: flex; flex-direction: column;
+        }
+        .card:hover { border-color: var(--primary); background: var(--bg-card-hover); }
+        
+        .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px dashed var(--border-glass); padding-bottom: 15px;}
+        .card-header i { font-size: 1.6rem; color: var(--primary); }
+        .card-header h3 { font-size: clamp(1.2rem, 2vw, 1.4rem); font-weight: 900; color: var(--text-main); }
+
+        .rules-ul { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+        .rules-ul li { position: relative; padding-right: 45px; font-size: clamp(1.05rem, 2vw, 1.15rem); line-height: 1.6; color: var(--text-muted); font-weight: 500;}
+        .rules-ul li strong { color: var(--text-main); font-weight: 800; display: inline-block; margin-bottom: 3px;}
+        .rules-ul li::before {
+            position: absolute; right: 0; top: 4px; width: 28px; height: 28px; border-radius: 6px;
+            display: flex; justify-content: center; align-items: center; font-size: 13px;
+            font-family: 'Font Awesome 6 Free'; font-weight: 900;
+        }
+        .task-rules li::before { content: '\f00c'; color: var(--success); background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success);}
+        .no-rules li::before { content: '\f00d'; color: var(--danger); background: rgba(244, 63, 94, 0.15); border: 1px solid var(--danger);}
+
+        /* =========================================
+           قسم الصيانة الخاص (جوتكار)
+           ========================================= */
+        .maintenance-card {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.02));
+            border: 1px solid var(--accent-gold); border-radius: 20px; padding: 35px; margin-bottom: 50px;
+        }
+        .maintenance-card .card-header i { color: var(--accent-gold); }
+
+        /* =========================================
+           الفوتر (قسم التسويق)
+           ========================================= */
+        footer {
+            background: var(--bg-base); border-top: 1px solid var(--border-glass);
+            padding: 50px 20px; text-align: center; margin-top: 20px;
+        }
+        
+        .marketing-credit {
+            display: inline-flex; align-items: center; gap: 10px; background: rgba(225, 29, 72, 0.1); border: 1px solid var(--primary);
+            color: var(--primary); padding: 12px 35px; border-radius: 30px; font-size: 1.1rem; font-weight: 800; margin-bottom: 25px;
+        }
+        
+        .wa-contact {
+            display: inline-flex; align-items: center; gap: 12px; background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.5); color: #25d366; padding: 12px 35px;
+            border-radius: 30px; font-weight: 800; font-size: 1.15rem; text-decoration: none; transition: 0.3s;
+        }
+        .wa-contact:hover { background: #25d366; color: #fff; transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            .section-header { flex-direction: column; text-align: center; gap: 10px; }
+            .theme-switch-wrapper { top: 10px; left: 10px; }
+            .manager-role { font-size: 1rem; padding: 10px 20px;}
+            .grid-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- زر التبديل الليلي/النهاري -->
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" onchange="toggleTheme(this)">
+            <div class="slider"></div>
+        </label>
+    </div>
+
+    <!-- كانفاس حركة بطيئة وهادئة (الغبار/التنظيم) -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- الترويسة و لوحة الشرف المهنية -->
+    <header class="hero-section">
+        <i class="fa-solid fa-warehouse hero-icon"></i>
+        <h1>إدارة المخازن والمناولة</h1>
+        <h2>Warehouse & Internal Logistics</h2>
+        
+        <div class="motto-box">
+            <i class="fa-solid fa-boxes-stacked"></i> المخزن المنظم = مبيعات أسرع، وأخطاء صفر
+        </div>
+
+        <!-- لوحة هيكل القسم (بدون مبالغات) -->
+        <div class="team-board">
+            <div class="manager-role">
+                <i class="fa-solid fa-user-shield"></i> إدارة المخازن: ديار ياسين
+            </div>
+            
+            <div class="staff-grid">
+                <div class="staff-badge" style="border-color: var(--accent-gold); background: rgba(245,158,11,0.05);">
+                    <i class="fa-solid fa-screwdriver-wrench ic-jotkar"></i> جوتكار (مسؤول صيانة عامة ومخزن)
+                </div>
+                <div class="staff-badge"><i class="fa-solid fa-dolly ic-nader"></i> نادر</div>
+                <div class="staff-badge"><i class="fa-solid fa-box-open ic-jihad"></i> جهاد</div>
+                <div class="staff-badge"><i class="fa-solid fa-pallet ic-lazkeen"></i> لازكين</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- ==========================================
+             قانون الوصل (أساس العمل)
+             ========================================== -->
+        <div class="law-card">
+            <h3><i class="fa-solid fa-file-signature"></i> القاعدة الذهبية (قانون الوصل)</h3>
+            <p>يُمنع منعاً باتاً إخراج أي قطعة مهما صغرت من المخزن، أو نقلها للمعرض، أو تسليمها لسائق <strong>بدون وصل رسمي مكتوب ومطابق</strong>. الاعتماد على الذاكرة أو تنفيذ الأوامر الشفهية من البائعين مرفوض كلياً.</p>
+        </div>
+
+        <!-- ==========================================
+             نظام 5S الياباني
+             ========================================== -->
+        <div class="section-header">
+            <i class="fa-solid fa-layer-group"></i>
+            <h2>نظام 5S لإدارة المخازن</h2>
+        </div>
+        
+        <div class="five-s-grid">
+            <div class="s-box">
+                <div class="s-title"><span class="eng">1S</span> <span class="arb">Sort (التصنيف)</span></div>
+                <div class="s-desc">فرز وإزالة كل الكراتين الفارغة، الأخشاب التالفة، والأشياء غير الضرورية يومياً.</div>
+            </div>
+            <div class="s-box">
+                <div class="s-title"><span class="eng">2S</span> <span class="arb">Set in Order (الترتيب)</span></div>
+                <div class="s-desc">لكل صنف مكان ثابت. غرف النوم معاً، الطواقم معاً، والممرات سالكة.</div>
+            </div>
+            <div class="s-box">
+                <div class="s-title"><span class="eng">3S</span> <span class="arb">Shine (التنظيف)</span></div>
+                <div class="s-desc">أرضية خالية من البراغي ، وقطع نظيفة من غبار التخزين وجاهزة للتسليم.</div>
+            </div>
+            <div class="s-box">
+                <div class="s-title"><span class="eng">4S</span> <span class="arb">Standardize (المعيار)</span></div>
+                <div class="s-desc">توحيد طريقة التخزين (الثقيل بالأسفل، الخفيف بالأعلى) وتسمية الرفوف.</div>
+            </div>
+            <div class="s-box">
+                <div class="s-title"><span class="eng">5S</span> <span class="arb">Sustain (الاستدامة)</span></div>
+                <div class="s-desc">الالتزام الذاتي بهذه القواعد دون الحاجة لمراقب، وجعلها روتيناً يومياً.</div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             الموسوعة الشاملة لمهام المخزن
+             ========================================== -->
+        <div class="section-header">
+            <i class="fa-solid fa-list-check"></i>
+            <h2>الدليل المفصل لعمليات المخزن</h2>
+        </div>
+
+        <div class="grid-cards">
+            
+            <!-- 1. بروتوكول الاستلام والتفريغ -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                    <h3>1. الاستلام والتفريغ</h3>
+                </div>
+                <ul class="rules-ul task-rules">
+                    <li><strong>الفحص الدقيق:</strong> فحص البضائع فور نزولها من الشاحنات للتأكد من سلامة الكراتين وعدم وجود كسر أو بلل.</li>
+                    <li><strong>المطابقة:</strong> مطابقة عدد القطع المستلمة فعلياً مع الفاتورة أو قائمة الشحن (المانيفست) بدقة تامة.</li>
+                    <li><strong>التوزيع الفوري:</strong> نقل القطع مباشرة إلى أماكنها المخصصة في المخزن وعدم تكديسها عند باب الاستلام.</li>
+                    <li><strong>الأمن والسلامة:</strong> استخدام عربات النقل (الجك) بطريقة صحيحة وعدم تحميلها فوق طاقتها.</li>
+                </ul>
+            </div>
+
+            <!-- 2. بروتوكول التخزين والحماية -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-cubes-stacked"></i>
+                    <h3>2. التخزين الذكي والحماية</h3>
+                </div>
+                <ul class="rules-ul task-rules">
+                    <li><strong>هندسة التخزين:</strong> وضع الكراتين الثقيلة والأوزان الكبيرة في الأسفل، والقطع الخفيفة والزجاجية في الأعلى.</li>
+                    <li><strong>أمن الممرات:</strong> إبقاء جميع الممرات بين البضائع فارغة بنسبة 100% لتسهيل حركة العمال وتجنب الحوادث.</li>
+                    <li><strong>التغليف الاحتياطي:</strong> تغليف أي كرتون ممزق أو قطعة مفتوحة بنايلون فقاعي فوراً لحمايتها من الغبار والرطوبة.</li>
+                    <li><strong>التعريف الدائم:</strong> التأكد من وجود اسم/كود على كل كرتون لتجنب فتح الكراتين للبحث عن القطع.</li>
+                </ul>
+            </div>
+
+            <!-- 3. التجهيز وتسليم السائقين -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-box-check"></i>
+                    <h3>3. تجهيز الطلبيات للتحميل</h3>
+                </div>
+                <ul class="rules-ul task-rules">
+                    <li><strong>التجهيز المسبق:</strong> سحب القطع المطلوبة من الرفوف وتجهيزها في (منطقة التحميل) قبل وصول السائق بوقت كافٍ.</li>
+                    <li><strong>الفحص قبل الخروج:</strong> التأكد من سلامة القطعة وتطابق ألوانها وملحقاتها مع طلب الزبون (الوصل) قبل تسليمها للسائق.</li>
+                    <li><strong>المساعدة بالتحميل:</strong> مساعدة السائق في رفع القطع وترتيبها داخل السيارة لضمان استقرارها وتوزيع الأوزان.</li>
+                </ul>
+            </div>
+
+            <!-- 4. الممنوعات الإدارية -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-ban" style="color: var(--danger);"></i>
+                    <h3>4. الممنوعات القطعية</h3>
+                </div>
+                <ul class="rules-ul no-rules">
+                    <li><strong>الخلط العشوائي:</strong> خلط القطع المتشابهة في اللون أو الموديل أو وضعها في مكان غير مخصص لها.</li>
+                    <li><strong>نقل الأحمال الثقيلة فردياً:</strong> محاولة رفع قطعة ضخمة بمفردك. اطلب المساعدة دائماً لحماية القطعة وحماية ظهرك.</li>
+                    <li><strong>تجاهل التالف:</strong> إرجاع قطعة مكسورة أو تالفة إلى الرف دون إبلاغ الإدارة وعزلها في قسم الصيانة.</li>
+                    <li><strong>التدخين:</strong> التدخين داخل المخزن أو بالقرب من مواد التغليف والنايلون منعاً للحرائق.</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+         الفوتر الختامي
+         ========================================== -->
+    <footer>
+        <div class="marketing-credit">
+            <i class="fa-solid fa-file-shield"></i> صادر من قسم التسويق والتطوير
+        </div>
+        <br>
+        <a href="https://wa.me/9647502316274" class="wa-contact" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i> تواصل مع إدارة التسويق
+        </a>
+    </footer>
+
+    <!-- سكربت حركة هادئة وبطيئة -->
+    <script>
+        function toggleTheme(checkbox) {
+            if(checkbox.checked) {
+                document.body.setAttribute('data-theme', 'light');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        }
+
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            // كثافة منخفضة وحركة بطيئة جداً
+            let particleCount = window.innerWidth < 768 ? 20 : 40;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 1.5 + 0.5,
+                    vx: Math.random() * 0.15 - 0.075, 
+                    vy: Math.random() * 0.15 - 0.075
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, width, height);
+            
+            let isLightMode = document.body.getAttribute('data-theme') === 'light';
+            let particleColor = isLightMode ? 'rgba(190, 18, 60, 0.3)' : 'rgba(225, 29, 72, 0.3)';
+            ctx.fillStyle = particleColor;
+            
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                p.x += p.vx; p.y += p.vy;
+                
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+            });
+
+            requestAnimationFrame(drawParticles);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        drawParticles();
+    </script>
+</body>
+</html>
+
+
+```
